@@ -10,14 +10,14 @@ import './styles/app.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import TransportForm from './controllers/TransportForm';
 
 function App(){
     return(
-        <div className="App">MY app</div>
+        <div className="App"><TransportForm /></div>
     )
 }
 
-//export default App;
 ReactDOM.render(<App/>, document.getElementById('root'));
 
 
