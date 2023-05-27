@@ -1,7 +1,18 @@
-import React, {useEffect} from 'react';
+import React, {useState} from 'react';
 import '../styles/TransportForm.scss';
 
+import LoadInputs from './LoadInputs';
+import ILoad from '../interfaces/ILoad';
+
 export default function TransportForm(){
+    //const loads:{[key: number]: ILoad} = {};
+    const loads: ILoad[] = [];
+    const [loadsList, addToLoadList] = useState(loads);
+    const [maxWeight, setMaxWeight] = useState(35);
+
+    const modLoad = (e:React.ChangeEvent<HTMLFormElement>) => {
+
+    }
 
     const formValidate : { [key: string]: boolean} = {
         "transpor-from" : false,
@@ -33,6 +44,11 @@ export default function TransportForm(){
         }
       }
     
+    const setPlaneType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newValue = e.target.value;
+        console.log(`Changed plane type: ${newValue}`);
+    }
+
     const submitButton = (e:React.FormEvent) => {
         e.preventDefault();
         console.log("Submit button event");
@@ -40,7 +56,17 @@ export default function TransportForm(){
 
     const addNewLoad = (e:React.FormEvent) => {
         e.preventDefault();
+        
+        const newLoad = {"load-name":"", "load-weight": 1, "load-type":"common-load"};
+        addToLoadList([...loadsList, newLoad]); 
+        console.log(`Load list: ${loadsList}`);
+        /*
         console.log("Add new load button event");
+        let planeTypeEl = document.querySelector("#main-form select[name=\"plane-type\"]") as HTMLInputElement;
+        console.log(`Plane type el: ${planeTypeEl.value}`)
+        const newMaxWeight = (planeTypeEl.value == "airbus-A380") ? 35 : 38;
+        setMaxWeight(newMaxWeight);
+        */
     }
 
 
@@ -53,7 +79,7 @@ export default function TransportForm(){
                 <label>Transport do:</label>
                 <input type="text" name="transport-to" required placeholder="Transport do"></input>
                 <label>Typ samolotu:</label>
-                <select name="plane-type">
+                <select name="plane-type" required onChange={setPlaneType} defaultValue="airbus-A380">
                     <option value="airbus-A380">Airbus A380</option>
                     <option value="boeing-747">Boeing 747</option>
                 </select>
@@ -64,6 +90,7 @@ export default function TransportForm(){
                 </div>
                 <label>Wybierz date transportu:</label>
                 <input type="date" name="transport-date" required onChange={validDate}></input>
+                <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
                 <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
                 <button onClick={submitButton}>Przeslij formularz</button>
             </form>
