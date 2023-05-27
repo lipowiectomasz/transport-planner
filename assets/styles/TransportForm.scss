@@ -12,5 +12,10 @@
         width: 200px;
         height: 100px;
     }
-    
+    .invalid{
+        background-color: rgb(133, 96, 96);
+    }
+    .valid{
+        background-color: rgb(137, 255, 182);
+    }
 }
