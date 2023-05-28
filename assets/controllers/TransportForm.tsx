@@ -1,4 +1,4 @@
-import React, {DragEventHandler, useState} from 'react';
+import React, {DragEventHandler, useEffect, useState} from 'react';
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
@@ -12,6 +12,7 @@ export default function TransportForm(){
     const [loadsList, addToLoadList] = useState(loads);
     const [maxWeight, setMaxWeight] = useState(35);
     const [dropZoneClass, setDropZoneClass] = useState("drop-zone-unactive");
+    const [dropedList, addToDropedList] = useState<File[]>([]);
 
     const modLoad = (e:React.ChangeEvent<HTMLFormElement>) => {
         console.log("caling for change");
@@ -81,28 +82,79 @@ export default function TransportForm(){
         e.preventDefault();
         e.stopPropagation();
     }
+    //let fullDropedList: DataTransfer[] = new DataTransfer();
     
+
+    useEffect(()=>{
+        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
+        const filesDroped = new DataTransfer();
+        for(let file of dropedList){
+            filesDroped.items.add(file);
+        }
+        fileInput.files = filesDroped.files;             
+    }, [dropedList]);
+
     const droped = (e:React.DragEvent<HTMLDivElement>) =>{
+        /*
+        const isFile = (testFile:File)=>{
+            return testFile.name === 
+        }
+        */
         e.preventDefault();
         e.stopPropagation();
         setDropZoneClass("drop-zone-droped");
-        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
-        console.log("droped");
-        const filesDroped = new DataTransfer();
+        
+        
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            /*
+            const placeFilesInInput = () => {
+                const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
+            console.log("droped");
+                const filesDroped = new DataTransfer();
+                if(dropedList){
+                    for(let file of dropedList){
+                        console.log(`Aded ${file.name}`);
+                        filesDroped.items.add(file);
+                    }
+                    console.log(`Doing leng: ${dropedList.length}`);
+                } else {
+                    console.log("Its not here"+dropedList+" orr "+e.dataTransfer.files[0].name);
+                    addToDropedList([e.dataTransfer.files[0]]);
+                    filesDroped.items.add(e.dataTransfer.files[0]);
+                }
+        
+                fileInput.files = filesDroped.files;
+            }
+            */
             for(let file of e.dataTransfer.files){
                 console.log(`File: ${file.name}`);
-                filesDroped.items.add(file);
-                console.log(filesDroped.items);
-                //fileInput.files
-            }
-            console.log("None files"+filesDroped.files.length);
-            fileInput.files = filesDroped.files;
+
+                const isFile = (testFile:File)=>{
+                    return testFile.name === file.name;
+                }
+
+                if(dropedList.find(isFile)){
+                    console.log("This file is already present...");
+                } 
+                else{
+                    console.log(`Adding file: ${file.name}`);
+                    addToDropedList([...dropedList, file]);
+                    //setTimeout(placeFilesInInput, 500);
+                }
+            }    
         }
+
+
+
+
     }
 
     const showFiles = (e:React.FormEvent) => {
-        console.log('ee');
+        console.log(`Full droped: ${dropedList.length}`);
+        for(let file of dropedList){
+            console.log(`Elements: ${file.name}`);
+        }
+        
         e.preventDefault();
         const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
         if(fileInput.files != null){
