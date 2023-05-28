@@ -13,6 +13,16 @@ export default function TransportForm(){
     const [maxWeight, setMaxWeight] = useState(35);
     const [dropZoneClass, setDropZoneClass] = useState("drop-zone-unactive");
     const [dropedList, addToDropedList] = useState<File[]>([]);
+    const [dropZone, setDropZone] = useState(<>Przeciagnij tu swoje dokumenty przewozowe</>);
+
+    useEffect(()=>{
+        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
+        const filesDroped = new DataTransfer();
+        for(let file of dropedList){
+            filesDroped.items.add(file);
+        }
+        fileInput.files = filesDroped.files;             
+    }, [dropedList]);
 
     const modLoad = (e:React.ChangeEvent<HTMLFormElement>) => {
         console.log("caling for change");
@@ -31,11 +41,7 @@ export default function TransportForm(){
     }
 
     const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        console.log(`New date value: ${newValue}`);
-        let newValueDate = new Date(newValue);
-        console.log(`New date value as Date obj: ${newValueDate}`);
-        console.log(`Current day: ${newValueDate.getDay()}`);
+        let newValueDate = new Date(e.target.value);
 
         if(newValueDate.getDay() == 0 || newValueDate.getDay() == 6 ){
             console.log("Transport moze sie odbyc tylko od poniedzialku do piatku!");
@@ -61,74 +67,29 @@ export default function TransportForm(){
 
     const addNewLoad = (e:React.FormEvent) => {
         e.preventDefault();
-        
-        const newLoad = {"load-name":"", "load-weight": 1, "load-type":"common-load"};
-        addToLoadList([...loadsList, newLoad]); 
-        console.log(`Load list: ${loadsList}`);
-        /*
-        console.log("Add new load button event");
-        let planeTypeEl = document.querySelector("#main-form select[name=\"plane-type\"]") as HTMLInputElement;
-        console.log(`Plane type el: ${planeTypeEl.value}`)
-        const newMaxWeight = (planeTypeEl.value == "airbus-A380") ? 35 : 38;
-        setMaxWeight(newMaxWeight);
-        */
+        addToLoadList([...loadsList, {"load-name":"", "load-weight": 1, "load-type":"common-load"}]); 
     }
 
-    const dragEnter = () =>{
-        setDropZoneClass("drop-zone-drag-enter");
-    }
     const dragLeave = (e:React.DragEvent<HTMLDivElement>) =>{
-        setDropZoneClass("drop-zone-drag-leave");
         e.preventDefault();
-        e.stopPropagation();
+        setDropZoneClass("drop-zone-drag-enter");
+        setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     }
-    //let fullDropedList: DataTransfer[] = new DataTransfer();
-    
 
-    useEffect(()=>{
-        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
-        const filesDroped = new DataTransfer();
-        for(let file of dropedList){
-            filesDroped.items.add(file);
-        }
-        fileInput.files = filesDroped.files;             
-    }, [dropedList]);
+    const dragOver = (e:React.DragEvent<HTMLDivElement>) =>{
+        e.preventDefault();
+        setDropZoneClass("drop-zone-drag-leave");
+        setDropZone(<>Upusc tutaj</>);
+    }
 
     const droped = (e:React.DragEvent<HTMLDivElement>) =>{
-        /*
-        const isFile = (testFile:File)=>{
-            return testFile.name === 
-        }
-        */
         e.preventDefault();
-        e.stopPropagation();
+        //e.stopPropagation();
         setDropZoneClass("drop-zone-droped");
         
-        
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            /*
-            const placeFilesInInput = () => {
-                const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
-            console.log("droped");
-                const filesDroped = new DataTransfer();
-                if(dropedList){
-                    for(let file of dropedList){
-                        console.log(`Aded ${file.name}`);
-                        filesDroped.items.add(file);
-                    }
-                    console.log(`Doing leng: ${dropedList.length}`);
-                } else {
-                    console.log("Its not here"+dropedList+" orr "+e.dataTransfer.files[0].name);
-                    addToDropedList([e.dataTransfer.files[0]]);
-                    filesDroped.items.add(e.dataTransfer.files[0]);
-                }
-        
-                fileInput.files = filesDroped.files;
-            }
-            */
-            for(let file of e.dataTransfer.files){
-                console.log(`File: ${file.name}`);
 
+            for(let file of e.dataTransfer.files){
                 const isFile = (testFile:File)=>{
                     return testFile.name === file.name;
                 }
@@ -139,22 +100,15 @@ export default function TransportForm(){
                 else{
                     console.log(`Adding file: ${file.name}`);
                     addToDropedList([...dropedList, file]);
-                    //setTimeout(placeFilesInInput, 500);
                 }
             }    
         }
 
-
-
-
+        setDropZoneClass("drop-zone-drag-enter");
+        setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     }
 
     const showFiles = (e:React.FormEvent) => {
-        console.log(`Full droped: ${dropedList.length}`);
-        for(let file of dropedList){
-            console.log(`Elements: ${file.name}`);
-        }
-        
         e.preventDefault();
         const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
         if(fileInput.files != null){
@@ -164,6 +118,25 @@ export default function TransportForm(){
         }
         else {
             console.log("empty");
+        }
+    }
+
+    const fileDel = (e:React.FormEvent, file:File) => {
+        e.preventDefault();
+        let newList = dropedList;
+        newList.splice(newList.indexOf(file),1);
+        addToDropedList([...newList]);
+        setDropZoneClass("drop-zone-drag-leave");
+    }
+
+    const checkFiles = (e:React.FormEvent<HTMLInputElement>) => {
+        console.log("Fired checkFile");
+        const filesInput = e.target as HTMLInputElement;
+        if(filesInput.files){
+            for(let file of filesInput.files){
+                if(!dropedList.find( el => el == file))
+                    addToDropedList([...dropedList, file]);
+            }
         }
     }
 
@@ -181,10 +154,15 @@ export default function TransportForm(){
                     <option value="boeing-747">Boeing 747</option>
                 </select>
                 <label>Dokumenty przewozowe:</label>
-                <input type="file" name="transport-docs" accept=".jpg, .png, .doc, .docx, .pdf" multiple></input>
-                <div id="drop_zone" className={dropZoneClass} onDragEnter={dragEnter} onDragOver={dragLeave} onDrop={droped}>
-                    <p>Drag one or more files to this <i>drop zone</i>.</p>
+                <div id="file-zone">
+                    <div id="drop-zone" className={dropZoneClass} onDragLeave={dragLeave} onDragOver={dragOver} onDrop={droped}>
+                        {dropZone}
+                    </div>
+                    <div id="file-tab">Pliki:{dropedList.map((file, index)=><p key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
+                    }>X</button></p>)}</div>
                 </div>
+                
+                <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
                 <label>Wybierz date transportu:</label>
                 <input type="date" name="transport-date" required onChange={validDate}></input>
                 <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
