@@ -1,4 +1,4 @@
-import React, {DragEventHandler, useEffect, useState} from 'react';
+import React, {ChangeEvent, DragEventHandler, useEffect, useState} from 'react';
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
@@ -24,8 +24,21 @@ export default function TransportForm(){
         fileInput.files = filesDroped.files;             
     }, [dropedList]);
 
-    const modLoad = (e:React.ChangeEvent<HTMLFormElement>) => {
-        console.log("caling for change");
+    const modLoad = (e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>, id:number) => {
+        console.log(`ID: ${id} and target name: ${e.target.name}`);
+        const element:string = 'load-name';
+        switch(e.target.name){
+            case 'load-name':
+                loadsList[id]['load-name'] = e.target.value;
+                break;
+            case 'load-weight':
+                loadsList[id]['load-weight'] = parseInt(e.target.value);
+                break;
+            case 'load-type':
+                loadsList[id]['load-type'] = e.target.value;
+                break;
+        }
+        console.log(`LISTA: ${loadsList[id]['load-name']}  ${loadsList[id]['load-weight']}  ${loadsList[id]['load-type']}`);
     }
 
     const formValidate : { [key: string]: boolean} = {
@@ -108,19 +121,6 @@ export default function TransportForm(){
         setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     }
 
-    const showFiles = (e:React.FormEvent) => {
-        e.preventDefault();
-        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
-        if(fileInput.files != null){
-            for(let file of fileInput.files){
-                console.log(`Files: ${file.name}`);
-            }
-        }
-        else {
-            console.log("empty");
-        }
-    }
-
     const fileDel = (e:React.FormEvent, file:File) => {
         e.preventDefault();
         let newList = dropedList;
@@ -144,6 +144,9 @@ export default function TransportForm(){
 
             <form id="main-form">
                 <p>Skonfiguruj transport</p>
+                <div>
+                    
+                </div>
                 <label>Transport z:</label>
                 <input type="text" name="transport-from" required placeholder="Transport z"></input>
                 <label>Transport do:</label>
@@ -168,7 +171,7 @@ export default function TransportForm(){
                 <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
                 <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
                 <button onClick={submitButton}>Przeslij formularz</button>
-                <button onClick={showFiles}>Pokaz pliki</button>
+                
             </form>
  
     )
