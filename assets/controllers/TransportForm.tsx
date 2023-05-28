@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {DragEventHandler, useState} from 'react';
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
@@ -6,12 +6,15 @@ import ILoad from '../interfaces/ILoad';
 
 export default function TransportForm(){
     //const loads:{[key: number]: ILoad} = {};
-    const loads: ILoad[] = [];
+    const loads: ILoad[] = [
+        {"load-name":"", "load-weight": 1, "load-type":"common-load"}
+    ];
     const [loadsList, addToLoadList] = useState(loads);
     const [maxWeight, setMaxWeight] = useState(35);
+    const [dropZoneClass, setDropZoneClass] = useState("drop-zone-unactive");
 
     const modLoad = (e:React.ChangeEvent<HTMLFormElement>) => {
-
+        console.log("caling for change");
     }
 
     const formValidate : { [key: string]: boolean} = {
@@ -45,12 +48,13 @@ export default function TransportForm(){
       }
     
     const setPlaneType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newValue = e.target.value;
-        console.log(`Changed plane type: ${newValue}`);
+        console.log(`Changed plane type`);
+        const newMaxWeight = (e.target.value== "airbus-A380") ? 35 : 38;
+        setMaxWeight(newMaxWeight);
     }
 
     const submitButton = (e:React.FormEvent) => {
-        e.preventDefault();
+        //e.preventDefault();
         console.log("Submit button event");
     }
 
@@ -69,6 +73,47 @@ export default function TransportForm(){
         */
     }
 
+    const dragEnter = () =>{
+        setDropZoneClass("drop-zone-drag-enter");
+    }
+    const dragLeave = (e:React.DragEvent<HTMLDivElement>) =>{
+        setDropZoneClass("drop-zone-drag-leave");
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    const droped = (e:React.DragEvent<HTMLDivElement>) =>{
+        e.preventDefault();
+        e.stopPropagation();
+        setDropZoneClass("drop-zone-droped");
+        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
+        console.log("droped");
+        const filesDroped = new DataTransfer();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            for(let file of e.dataTransfer.files){
+                console.log(`File: ${file.name}`);
+                filesDroped.items.add(file);
+                console.log(filesDroped.items);
+                //fileInput.files
+            }
+            console.log("None files"+filesDroped.files.length);
+            fileInput.files = filesDroped.files;
+        }
+    }
+
+    const showFiles = (e:React.FormEvent) => {
+        console.log('ee');
+        e.preventDefault();
+        const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
+        if(fileInput.files != null){
+            for(let file of fileInput.files){
+                console.log(`Files: ${file.name}`);
+            }
+        }
+        else {
+            console.log("empty");
+        }
+    }
 
     return(
 
@@ -84,8 +129,8 @@ export default function TransportForm(){
                     <option value="boeing-747">Boeing 747</option>
                 </select>
                 <label>Dokumenty przewozowe:</label>
-                <input type="file" name="transport-docs"></input>
-                <div id="drop_zone">
+                <input type="file" name="transport-docs" accept=".jpg, .png, .doc, .docx, .pdf" multiple></input>
+                <div id="drop_zone" className={dropZoneClass} onDragEnter={dragEnter} onDragOver={dragLeave} onDrop={droped}>
                     <p>Drag one or more files to this <i>drop zone</i>.</p>
                 </div>
                 <label>Wybierz date transportu:</label>
@@ -93,6 +138,7 @@ export default function TransportForm(){
                 <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
                 <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
                 <button onClick={submitButton}>Przeslij formularz</button>
+                <button onClick={showFiles}>Pokaz pliki</button>
             </form>
  
     )

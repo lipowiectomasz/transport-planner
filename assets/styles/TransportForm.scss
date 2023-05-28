@@ -18,4 +18,22 @@
     .valid{
         background-color: rgb(137, 255, 182);
     }
+    .load-container:nth-child(even){
+        background-color: beige;
+    }
+    .load-container:nth-child(odd){
+        background-color: bisque;
+    }
+    .drop-zone-unactive{
+        background-color: rgb(255, 145, 187);
+    }
+    .drop-zone-drag-enter{
+        background-color: rgb(25, 241, 187);
+    }
+    .drop-zone-drag-leave{
+        background-color: rgb(161, 61, 243);
+    }
+    .drop-zone-droped{
+        background-color: rgb(235, 154, 88);
+    }
 }
