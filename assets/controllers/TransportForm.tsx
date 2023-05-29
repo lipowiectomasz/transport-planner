@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState, useRef} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
@@ -163,9 +163,9 @@ export default function TransportForm(){
     }
 
     return(
-
+        <>
+            <p id="title">Konfigurator transportu</p>
             <form id="main-form">
-                <p>Skonfiguruj transport</p>
                 <label>Transport z:</label>
                 <input type="text" name="transport-from" required placeholder="Transport z" onChange={validFormData}></input>
                 <label>Transport do:</label>
@@ -195,7 +195,7 @@ export default function TransportForm(){
                 <button onClick={submitButton}>Przeslij formularz</button>
                 
             </form>
- 
+        </>
     )
 }
 

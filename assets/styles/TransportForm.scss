@@ -1,12 +1,18 @@
+#title{
+    height: 10vh;
+}
 #main-form{
+    font-size: 1.2rem;
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
+
     *{
         margin: 1% 2% 1% 0;
         width: 80%;
     }
+
     #file-zone{
         display:flex;
         flex-direction: row;
@@ -20,27 +26,30 @@
             background-color: rgb(233, 245, 255);
             border-radius: 15px;
         }
-        /*
-        #drop-zone {
+    }
+
+    #date-box{
+        display: flex;
+        flex-direction: row;
+        input, p{
+            text-align: center;
             width: 50%;
-            height: 100%;
-        }
-        #file-tab{
-            width: 50%;
-            height: 100%;
-        }
-        */
-        #date-box{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            background-color: aqua;
-            input, p{
-                width: 50%;
-            }
         }
     }
 
+    input, select{
+        background-color: rgb(231, 231, 231);
+        border: none;
+        padding: 2%;
+        border-radius: 30px;
+        box-sizing: border-box;
+    }
+
+    button{
+        width: 30%;
+        padding: 2%;
+        border-radius: 30px;
+    }
 
     .invalid{
         background-color: rgb(133, 96, 96);
@@ -49,7 +58,10 @@
         background-color: rgb(137, 255, 182);
     }
     .load-container{
-           
+        padding: 2%;
+        border-radius: 30px;
+        display: flex;
+        flex-direction: column;
     }
     .load-container:nth-child(even){
         background-color: beige;
@@ -70,4 +82,11 @@
         background-color: rgb(235, 154, 88);
     }
 
+}
+@media (min-width: 1000px){
+    #main-form{
+        *{
+            width: 900px;
+        }
+    }
 }
