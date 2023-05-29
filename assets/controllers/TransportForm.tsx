@@ -17,9 +17,9 @@ export default function TransportForm(){
     const [dateAlert, setDateAlert] = useState("");
 
     const initialData: ITransport = {
-        "transpor-from" : "",
+        "transport-from" : "",
         "transport-to" : "",
-        "plane-type" : "",
+        "plane-type" : "airbus-a380",
         "transport-docs" : [],
         "transport-date" : "",
         "transport-loads" : []
@@ -37,8 +37,12 @@ export default function TransportForm(){
         transportData['transport-docs'] = [...fileInput.files];     
     }, [dropedList]);
 
+    useEffect(()=>{
+        transportData['transport-loads'] = [...loadsList];
+    },[loadsList]);
+
     const modLoad = (e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>, id:number) => {
-        console.log(`ID: ${id} and target name: ${e.target.name}`);
+        
         const element:string = 'load-name';
         switch(e.target.name){
             case 'load-name':
@@ -51,7 +55,7 @@ export default function TransportForm(){
                 loadsList[id]['load-type'] = e.target.value;
                 break;
         }
-        console.log(`LISTA: ${loadsList[id]['load-name']}  ${loadsList[id]['load-weight']}  ${loadsList[id]['load-type']}`);
+        
     }
 
     const formValidate : { [key: string]: boolean} = {
@@ -62,8 +66,16 @@ export default function TransportForm(){
         formValidate[inputName] = mode;
     }
 
-    const validFormData = (e: React.ChangeEvent) => {
-
+    const validFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
+        switch(e.target.name){
+            case 'transport-to':
+                transportData['transport-to'] = e.target.value;
+                break;
+            case 'transport-from':
+                transportData['transport-from'] = e.target.value;
+                break;
+        }
+        
     }
 
     const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,11 +115,11 @@ export default function TransportForm(){
                 load['load-weight']=newMaxWeight;
             }
         }
+        transportData['plane-type']=e.target.value;
     }
 
     const submitButton = (e:React.FormEvent) => {
-        //e.preventDefault();
-        console.log("Submit button event");
+        e.preventDefault();
         console.log(transportData);
     }
 
@@ -144,7 +156,7 @@ export default function TransportForm(){
                     console.log("This file is already present...");
                 } 
                 else{
-                    console.log(`Adding file: ${file.name}`);
+                    console.log(`Adding file: ${file.name} with type: ${file.type}`);
                     addToDropedList([...dropedList, file]);
                 }
             }    

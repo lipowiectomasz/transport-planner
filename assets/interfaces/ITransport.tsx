@@ -1,7 +1,7 @@
 import ILoad from "./ILoad"
 
 export default interface ITransport{
-    "transpor-from" : string,
+    "transport-from" : string,
     "transport-to" : string,
     "plane-type" : string,
     "transport-docs" : File[],
