@@ -1,19 +1,31 @@
-import React, {ChangeEvent, DragEventHandler, useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState, useRef} from 'react';
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
 import ILoad from '../interfaces/ILoad';
+import ITransport from '../interfaces/ITransport';
 
 export default function TransportForm(){
-    //const loads:{[key: number]: ILoad} = {};
-    const loads: ILoad[] = [
-        {"load-name":"", "load-weight": 1, "load-type":"common-load"}
-    ];
-    const [loadsList, addToLoadList] = useState(loads);
+
+    const initialLoads: ILoad[] = [{"load-name":"", "load-weight": 1, "load-type":"common-load"}];
+
+    const [loadsList, addToLoadList] = useState<ILoad[]>(initialLoads);
     const [maxWeight, setMaxWeight] = useState(35);
     const [dropZoneClass, setDropZoneClass] = useState("drop-zone-unactive");
     const [dropedList, addToDropedList] = useState<File[]>([]);
     const [dropZone, setDropZone] = useState(<>Przeciagnij tu swoje dokumenty przewozowe</>);
+    const [dateAlert, setDateAlert] = useState("");
+
+    const initialData: ITransport = {
+        "transpor-from" : "",
+        "transport-to" : "",
+        "plane-type" : "",
+        "transport-docs" : [],
+        "transport-date" : "",
+        "transport-loads" : []
+    }
+    
+    const [transportData, setTransportData] = useState<ITransport>(initialData);
 
     useEffect(()=>{
         const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
@@ -21,7 +33,8 @@ export default function TransportForm(){
         for(let file of dropedList){
             filesDroped.items.add(file);
         }
-        fileInput.files = filesDroped.files;             
+        fileInput.files = filesDroped.files;   
+        transportData['transport-docs'] = [...fileInput.files];     
     }, [dropedList]);
 
     const modLoad = (e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>, id:number) => {
@@ -42,10 +55,6 @@ export default function TransportForm(){
     }
 
     const formValidate : { [key: string]: boolean} = {
-        "transpor-from" : false,
-        "transport-to" : false,
-        "plane-type" : false,
-        "transport-docs" : false,
         "transport-date" : false
     };
 
@@ -53,17 +62,29 @@ export default function TransportForm(){
         formValidate[inputName] = mode;
     }
 
+    const validFormData = (e: React.ChangeEvent) => {
+
+    }
+
     const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
         let newValueDate = new Date(e.target.value);
-
         if(newValueDate.getDay() == 0 || newValueDate.getDay() == 6 ){
             console.log("Transport moze sie odbyc tylko od poniedzialku do piatku!");
             setValidation(e.target.name, false);
             e.target.className = "invalid";
+            setDateAlert("Wybierz dzien od pon-pt!");
         }
         else{
             setValidation(e.target.name, true);
             e.target.className = "valid";
+            const dateString = newValueDate.getDate()+"-"+newValueDate.getMonth()+1+"-"+newValueDate.getFullYear();
+            console.log(`${newValueDate.getDate()}-${newValueDate.getMonth()+1}-${newValueDate.getFullYear()}`);
+            setTransportData(
+                prev => {
+                    return {...prev, [e.target.name]: dateString}
+                }
+            );
+            console.log(transportData);
         }
       }
     
@@ -76,6 +97,7 @@ export default function TransportForm(){
     const submitButton = (e:React.FormEvent) => {
         //e.preventDefault();
         console.log("Submit button event");
+        console.log(transportData);
     }
 
     const addNewLoad = (e:React.FormEvent) => {
@@ -144,13 +166,10 @@ export default function TransportForm(){
 
             <form id="main-form">
                 <p>Skonfiguruj transport</p>
-                <div>
-                    
-                </div>
                 <label>Transport z:</label>
-                <input type="text" name="transport-from" required placeholder="Transport z"></input>
+                <input type="text" name="transport-from" required placeholder="Transport z" onChange={validFormData}></input>
                 <label>Transport do:</label>
-                <input type="text" name="transport-to" required placeholder="Transport do"></input>
+                <input type="text" name="transport-to" required placeholder="Transport do" onChange={validFormData}></input>
                 <label>Typ samolotu:</label>
                 <select name="plane-type" required onChange={setPlaneType} defaultValue="airbus-A380">
                     <option value="airbus-A380">Airbus A380</option>
@@ -167,7 +186,10 @@ export default function TransportForm(){
                 
                 <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
                 <label>Wybierz date transportu:</label>
-                <input type="date" name="transport-date" required onChange={validDate}></input>
+                <div id="date-box">
+                    <input type="date" name="transport-date" required onChange={validDate}></input>
+                    <p>{dateAlert}</p>
+                </div>
                 <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
                 <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
                 <button onClick={submitButton}>Przeslij formularz</button>
