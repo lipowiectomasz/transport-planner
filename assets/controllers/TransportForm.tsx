@@ -142,28 +142,61 @@ export default function TransportForm(){
 
     const droped = (e:React.DragEvent<HTMLDivElement>) =>{
         e.preventDefault();
-        //e.stopPropagation();
-        setDropZoneClass("drop-zone-droped");
+        
+        
         
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
 
             for(let file of e.dataTransfer.files){
-                const isFile = (testFile:File)=>{
-                    return testFile.name === file.name;
+                if(file.size/(1024*1024)>7){
+                    setDropZone(<>Zbyt duzy plik (max 7MB)</>);
+                    setDropZoneClass("invalid");
                 }
-
-                if(dropedList.find(isFile)){
-                    console.log("This file is already present...");
-                } 
                 else{
-                    console.log(`Adding file: ${file.name} with type: ${file.type}`);
-                    addToDropedList([...dropedList, file]);
+                    const isFile = (testFile:File)=>{
+                        return testFile.name === file.name;
+                    }
+    
+                    if(dropedList.find(isFile)){
+                        setDropZone(<>Ten plik zostal juz przeslany</>);
+                        setDropZoneClass("invalid");
+                    } 
+                    else{
+                        let allowType = false;
+                        if(file.type == 'image/jpeg' && file.name.substring(file.name.length - 3) == 'jpg'){
+                            allowType = true;
+                        }
+                        else if(file.type == 'image/png' && file.name.substring(file.name.length - 3) == 'png'){
+                            allowType = true;
+                        }
+                        else if(file.type == 'application/pdf' && file.name.substring(file.name.length - 3) == 'pdf'){
+                            allowType = true;
+                        }
+                        else if(file.type == 'application/msword' && file.name.substring(file.name.length - 3) == 'doc'){
+                            allowType = true;
+                        }
+                        else if(file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && file.name.substring(file.name.length - 4) == 'docx'){
+                            allowType = true;
+                        }
+                        if(allowType==true){
+                            console.log(`Adding file: ${file.name} with type: ${file.type} last letters: ${file.name.substring(file.name.length - 3)} size: ${file.size}`);
+                            addToDropedList([...dropedList, file]);
+                            setDropZone(<>Przeslano plik!</>);
+                            setDropZoneClass("valid");
+                        }
+                        else{
+                            console.log(`Adding file: ${file.name} with type: ${file.type} last letters: ${file.name.substring(file.name.length - 3)} size: ${file.size/(1024*1024)}`);
+                            setDropZone(<>Zly format. Akceptowane formaty to: .jpg, .png, .pdf, .docx, .doc.</>);
+                            setDropZoneClass("invalid");
+                        }
+                        
+                    }
                 }
             }    
         }
 
-        setDropZoneClass("drop-zone-drag-enter");
-        setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
+        //setDropZoneClass("drop-zone-drag-enter");
+        //setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     }
 
     const fileDel = (e:React.FormEvent, file:File) => {
@@ -209,8 +242,8 @@ export default function TransportForm(){
                         <div id="drop-zone" className={dropZoneClass} onDragLeave={dragLeave} onDragOver={dragOver} onDrop={droped}>
                             {dropZone}
                         </div>
-                        <div id="file-tab">Pliki:{dropedList.map((file, index)=><p key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
-                        }>X</button></p>)}</div>
+                        <div id="file-tab">Pliki:<ul>{dropedList.map((file, index)=><li key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
+                        }>X</button></li>)}</ul></div>
                     </div>
                     
                     <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
