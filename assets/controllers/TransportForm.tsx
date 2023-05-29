@@ -41,7 +41,7 @@ export default function TransportForm(){
         transportData['transport-loads'] = [...loadsList];
     },[loadsList]);
 
-    const modLoad = (e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLInputElement>, id:number) => {
+    const modLoad = (e:ChangeEvent<HTMLInputElement>, id:number) => {
         
         const element:string = 'load-name';
         switch(e.target.name){
@@ -58,7 +58,15 @@ export default function TransportForm(){
         
     }
 
-
+    const delLoad = (e:React.FormEvent, id:number) => {
+        e.preventDefault();
+        if(loadsList.length>1){
+            loadsList.splice(id,1);
+            addToLoadList([...loadsList]);
+        } else {
+            alert("W transporcie musi byc przynajmniej jeden towar!");
+        }
+    }
 
     const formValidate : { [key: string]: boolean} = {
         "transport-date" : false
@@ -244,10 +252,10 @@ export default function TransportForm(){
                     <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
                     <label>Wybierz date transportu:</label>
                     <div id="date-box">
-                        <input type="date" name="transport-date" required onChange={validDate} min={getCurrentDate()}></input>
+                        <input type="date" name="transport-date" required onChange={validDate} min={getCurrentDate()} placeholder='mm/dd/yyyy'></input>
                         <p>{dateAlert}</p>
                     </div>
-                    <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
+                    <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad} delLoad={delLoad}></LoadInputs>
                     <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
                     <button onClick={submitButton}>Przeslij formularz</button>
                     

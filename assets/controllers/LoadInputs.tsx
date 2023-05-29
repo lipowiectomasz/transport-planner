@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/TransportForm.scss';
 import ILoad from '../interfaces/ILoad';
 
-export default function LoadInputs(props:{loads:ILoad[], maxWeight: number, modLoad: Function}){
+export default function LoadInputs(props:{loads:ILoad[], maxWeight: number, modLoad: Function, delLoad: Function}){
 
     const SingleLoadInputs = (args:{load:ILoad, id:number}) =>{
         return(        
@@ -16,6 +16,7 @@ export default function LoadInputs(props:{loads:ILoad[], maxWeight: number, modL
                 <option value="common-load">Zwykly ladunek</option>
                 <option value="dangerous-load">Ladunek niebezpieczny</option>
             </select>
+            <button className="del-button" onClick={(e)=>{props.delLoad(e, args.id)}}>X</button>
         </div>)
     }
 

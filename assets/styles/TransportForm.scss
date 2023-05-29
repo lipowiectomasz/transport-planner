@@ -106,12 +106,26 @@
         background-color: #99F2D1;
     }
     .load-container{
+        position: relative;
         box-sizing: border-box;
         padding: 2%;
         border-radius: 30px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        .del-button{
+            position: absolute;
+            box-sizing: border-box;
+            width: 30px;
+            padding: 1px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1/1;
+            right: 10px;
+            top: 2px;
+            border: solid black 0.1px;
+        }
     }
     .load-container:nth-child(even){
         background-color: #E9FCF5;
