@@ -1,4 +1,7 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
+
+import axios from 'axios';
+
 import '../styles/TransportForm.scss';
 
 import LoadInputs from './LoadInputs';
@@ -26,6 +29,9 @@ export default function TransportForm(){
     }
     
     const [transportData, setTransportData] = useState<ITransport>(initialData);
+
+    const [dateValid, setDateValid] = useState(false);
+
 
     useEffect(()=>{
         const fileInput = document.querySelector("#main-form input[name=\"transport-docs\"]") as HTMLInputElement;
@@ -68,14 +74,6 @@ export default function TransportForm(){
         }
     }
 
-    const formValidate : { [key: string]: boolean} = {
-        "transport-date" : false
-    };
-
-    const setValidation = (inputName: string, mode : boolean)=>{
-        formValidate[inputName] = mode;
-    }
-
     const validFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
         switch(e.target.name){
             case 'transport-to':
@@ -92,18 +90,18 @@ export default function TransportForm(){
         let newValueDate = new Date(e.target.value);
         let currDate = new Date();
         if(newValueDate <= currDate){
-            setValidation(e.target.name, false);
+            setDateValid(false);
             e.target.className = "invalid";
             setDateAlert("Wybierz przyszla date!");
         }
         else{
             if(newValueDate.getDay() == 0 || newValueDate.getDay() == 6 ){
-                setValidation(e.target.name, false);
+                setDateValid(false);
                 e.target.className = "invalid";
                 setDateAlert("Transporty odbywaja sie tylko od pon-pt!");
             }
             else{
-                setValidation(e.target.name, true);
+                setDateValid(true);
                 e.target.className = "valid";
                 const dateString = newValueDate.getDate()+"-"+newValueDate.getMonth()+"-"+newValueDate.getFullYear();
                 setTransportData(
@@ -130,6 +128,20 @@ export default function TransportForm(){
 
     const submitButton = (e:React.FormEvent) => {
         e.preventDefault();
+        
+        if(dateValid){
+            //submit
+            axios.post('/api/transport/make', transportData)
+                .then(response => {
+                    console.log(response.data);
+                }).catch(error => {
+                    console.error(error);
+                })
+        }
+        
+        else{
+            alert("Ustaw poprawna date!");
+        }
         console.log(transportData);
     }
 
@@ -211,7 +223,6 @@ export default function TransportForm(){
     }
 
     const checkFiles = (e:React.FormEvent<HTMLInputElement>) => {
-        console.log("Fired checkFile");
         const filesInput = e.target as HTMLInputElement;
         if(filesInput.files){
             for(let file of filesInput.files){
@@ -230,7 +241,7 @@ export default function TransportForm(){
         <>
             <p id="title">Konfigurator transportu</p>
             <div id="form-container"> 
-                <form id="main-form">
+                <form id="main-form" onSubmit={submitButton}>
                     <label>Transport z:</label>
                     <input type="text" name="transport-from" required placeholder="Transport z" onChange={validFormData}></input>
                     <label>Transport do:</label>
@@ -257,7 +268,7 @@ export default function TransportForm(){
                     </div>
                     <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad} delLoad={delLoad}></LoadInputs>
                     <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
-                    <button onClick={submitButton}>Przeslij formularz</button>
+                    <button type="submit">Przeslij formularz</button>
                     
                 </form>
             </div>
