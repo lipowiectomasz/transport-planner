@@ -68,30 +68,41 @@ export default function TransportForm(){
 
     const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
         let newValueDate = new Date(e.target.value);
-        if(newValueDate.getDay() == 0 || newValueDate.getDay() == 6 ){
-            console.log("Transport moze sie odbyc tylko od poniedzialku do piatku!");
+        let currDate = new Date();
+        if(newValueDate <= currDate){
             setValidation(e.target.name, false);
             e.target.className = "invalid";
-            setDateAlert("Wybierz dzien od pon-pt!");
+            setDateAlert("Wybierz przyszla date!");
         }
         else{
-            setValidation(e.target.name, true);
-            e.target.className = "valid";
-            const dateString = newValueDate.getDate()+"-"+newValueDate.getMonth()+1+"-"+newValueDate.getFullYear();
-            console.log(`${newValueDate.getDate()}-${newValueDate.getMonth()+1}-${newValueDate.getFullYear()}`);
-            setTransportData(
-                prev => {
-                    return {...prev, [e.target.name]: dateString}
-                }
-            );
-            console.log(transportData);
+            if(newValueDate.getDay() == 0 || newValueDate.getDay() == 6 ){
+                setValidation(e.target.name, false);
+                e.target.className = "invalid";
+                setDateAlert("Transporty odbywaja sie tylko od pon-pt!");
+            }
+            else{
+                setValidation(e.target.name, true);
+                e.target.className = "valid";
+                const dateString = newValueDate.getDate()+"-"+newValueDate.getMonth()+"-"+newValueDate.getFullYear();
+                setTransportData(
+                    prev => {
+                        return {...prev, [e.target.name]: dateString}
+                    }
+                );
+                setDateAlert("");
+            }
         }
+        
       }
     
     const setPlaneType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(`Changed plane type`);
         const newMaxWeight = (e.target.value== "airbus-A380") ? 35 : 38;
         setMaxWeight(newMaxWeight);
+        for(let load of loadsList){
+            if(load['load-weight']>newMaxWeight){
+                load['load-weight']=newMaxWeight;
+            }
+        }
     }
 
     const submitButton = (e:React.FormEvent) => {
@@ -162,39 +173,46 @@ export default function TransportForm(){
         }
     }
 
+    const getCurrentDate = ()=>{
+        let currDate = new Date();
+        return currDate.getFullYear()+"-"+currDate.getMonth()+1+"-"+currDate.getDate();
+    }
+
     return(
         <>
             <p id="title">Konfigurator transportu</p>
-            <form id="main-form">
-                <label>Transport z:</label>
-                <input type="text" name="transport-from" required placeholder="Transport z" onChange={validFormData}></input>
-                <label>Transport do:</label>
-                <input type="text" name="transport-to" required placeholder="Transport do" onChange={validFormData}></input>
-                <label>Typ samolotu:</label>
-                <select name="plane-type" required onChange={setPlaneType} defaultValue="airbus-A380">
-                    <option value="airbus-A380">Airbus A380</option>
-                    <option value="boeing-747">Boeing 747</option>
-                </select>
-                <label>Dokumenty przewozowe:</label>
-                <div id="file-zone">
-                    <div id="drop-zone" className={dropZoneClass} onDragLeave={dragLeave} onDragOver={dragOver} onDrop={droped}>
-                        {dropZone}
+            <div id="form-container"> 
+                <form id="main-form">
+                    <label>Transport z:</label>
+                    <input type="text" name="transport-from" required placeholder="Transport z" onChange={validFormData}></input>
+                    <label>Transport do:</label>
+                    <input type="text" name="transport-to" required placeholder="Transport do" onChange={validFormData}></input>
+                    <label>Typ samolotu:</label>
+                    <select name="plane-type" required onChange={setPlaneType} defaultValue="airbus-A380">
+                        <option value="airbus-A380">Airbus A380</option>
+                        <option value="boeing-747">Boeing 747</option>
+                    </select>
+                    <label>Dokumenty przewozowe:</label>
+                    <div id="file-zone">
+                        <div id="drop-zone" className={dropZoneClass} onDragLeave={dragLeave} onDragOver={dragOver} onDrop={droped}>
+                            {dropZone}
+                        </div>
+                        <div id="file-tab">Pliki:{dropedList.map((file, index)=><p key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
+                        }>X</button></p>)}</div>
                     </div>
-                    <div id="file-tab">Pliki:{dropedList.map((file, index)=><p key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
-                    }>X</button></p>)}</div>
-                </div>
-                
-                <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
-                <label>Wybierz date transportu:</label>
-                <div id="date-box">
-                    <input type="date" name="transport-date" required onChange={validDate}></input>
-                    <p>{dateAlert}</p>
-                </div>
-                <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
-                <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
-                <button onClick={submitButton}>Przeslij formularz</button>
-                
-            </form>
+                    
+                    <input type="file" name="transport-docs" onChange={checkFiles} multiple></input>
+                    <label>Wybierz date transportu:</label>
+                    <div id="date-box">
+                        <input type="date" name="transport-date" required onChange={validDate} min={getCurrentDate()}></input>
+                        <p>{dateAlert}</p>
+                    </div>
+                    <LoadInputs maxWeight={maxWeight} loads={loadsList} modLoad={modLoad}></LoadInputs>
+                    <button onClick={addNewLoad}>Dodaj kolejny ladunek</button>
+                    <button onClick={submitButton}>Przeslij formularz</button>
+                    
+                </form>
+            </div>
         </>
     )
 }
