@@ -58,6 +58,8 @@ export default function TransportForm(){
         
     }
 
+
+
     const formValidate : { [key: string]: boolean} = {
         "transport-date" : false
     };
@@ -143,8 +145,6 @@ export default function TransportForm(){
     const droped = (e:React.DragEvent<HTMLDivElement>) =>{
         e.preventDefault();
         
-        
-        
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
 
             for(let file of e.dataTransfer.files){
@@ -179,13 +179,11 @@ export default function TransportForm(){
                             allowType = true;
                         }
                         if(allowType==true){
-                            console.log(`Adding file: ${file.name} with type: ${file.type} last letters: ${file.name.substring(file.name.length - 3)} size: ${file.size}`);
-                            addToDropedList([...dropedList, file]);
+                            addToDropedList(prev => [...prev, file]);
                             setDropZone(<>Przeslano plik!</>);
                             setDropZoneClass("valid");
                         }
                         else{
-                            console.log(`Adding file: ${file.name} with type: ${file.type} last letters: ${file.name.substring(file.name.length - 3)} size: ${file.size/(1024*1024)}`);
                             setDropZone(<>Zly format. Akceptowane formaty to: .jpg, .png, .pdf, .docx, .doc.</>);
                             setDropZoneClass("invalid");
                         }
@@ -194,9 +192,6 @@ export default function TransportForm(){
                 }
             }    
         }
-
-        //setDropZoneClass("drop-zone-drag-enter");
-        //setDropZone(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     }
 
     const fileDel = (e:React.FormEvent, file:File) => {
@@ -242,7 +237,7 @@ export default function TransportForm(){
                         <div id="drop-zone" className={dropZoneClass} onDragLeave={dragLeave} onDragOver={dragOver} onDrop={droped}>
                             {dropZone}
                         </div>
-                        <div id="file-tab">Pliki:<ul>{dropedList.map((file, index)=><li key={index}>{file.name}<button onClick={(e)=>{fileDel(e,file);}
+                        <div id="file-tab"><ul>{dropedList.map((file, index)=><li key={index}><p>{file.name}</p><button onClick={(e)=>{fileDel(e,file);}
                         }>X</button></li>)}</ul></div>
                     </div>
                     
