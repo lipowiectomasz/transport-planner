@@ -11,9 +11,9 @@ Przed uruchomieniem:
   yarn encore dev
   ```
 Uruchomienie: 
-
+ ```
   symfony server:start
-  
+ ``` 
 Zrealizowano:
 
   - formularz do tworzenia listy towarów dla transportu,
