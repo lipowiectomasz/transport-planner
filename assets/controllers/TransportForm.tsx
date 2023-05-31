@@ -55,7 +55,9 @@ export default function TransportForm(){
                 loadsList[id]['load-name'] = e.target.value;
                 break;
             case 'load-weight':
-                loadsList[id]['load-weight'] = parseInt(e.target.value);
+                const newWeight = (parseInt(e.target.value) > maxWeight) ? maxWeight : parseInt(e.target.value);
+                loadsList[id]['load-weight'] = newWeight;
+                e.target.value = newWeight.toString();
                 break;
             case 'load-type':
                 loadsList[id]['load-type'] = e.target.value;
@@ -149,7 +151,6 @@ export default function TransportForm(){
         else{
             alert("Ustaw poprawna date!");
         }
-        console.log(transportData);
     }
 
     const addNewLoad = (e:React.FormEvent) => {
