@@ -16,8 +16,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 class ApiTransportHandleController extends AbstractController
 {
-
-    
     
     #[Route('/make', name: 'handle_make')]
     public function make(Request $request):Response{
@@ -30,8 +28,7 @@ class ApiTransportHandleController extends AbstractController
             $transportDocs = $request->files->get('transport-docs');
             $transportDate = $request->request->get('transport-date');
             $transportLoads = $request->request->get('transport-loads');
-            $mailTo = ($transportPlaneType == 'airbus-A380') ? 'airbus@lemonmind.com' : 'boeing@lemonmind.com';
-            
+            $mailTo = ($transportPlaneType == 'airbus-a380') ? 'airbus@lemonmind.com' : 'boeing@lemonmind.com';
             
             $this->makeMail(
                 $transportFrom,
@@ -55,7 +52,7 @@ class ApiTransportHandleController extends AbstractController
         $mailer = new Mailer($transport);
         $email = (new Email());
         $email->from('tomlipdev@gmail.com');
-        $email->to('tomko993@gmail.com');
+        $email->to($mailTo);
         $email->subject("Nowy transport");
         
         if($transportDocs != NULL){
@@ -88,7 +85,7 @@ class ApiTransportHandleController extends AbstractController
         </table>
         <p style="font-size: 0.9rem; display: flex;	align-items: center; justify-content: center;
         background: linear-gradient(90deg, hsla(164, 38%, 18%, 1) 0%, hsla(158, 77%, 77%, 1) 100%);
-        height: 50px; width: 80%;">Tomasz Lipowiec'.$mailTo.'</p>
+        height: 50px; width: 80%;">Tomasz Lipowiec</p>
     </div>
 ');
 
