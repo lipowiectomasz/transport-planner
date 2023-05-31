@@ -31,11 +31,12 @@ class ApiTransportHandleController extends AbstractController
             var_dump($transportFrom);
             var_dump($transportTo);
             var_dump($transportPlaneType);
-            var_dump($transportDocs[0]->getMimeType());
+            var_dump($transportDocs);
             var_dump($transportDate);
             var_dump($transportLoads);
             //$files = $request->files->get('transport-docs');
             //var_dump($files[0]->getClientOriginalName());
+            /*
             $this->makeMail(
                 $transportFrom,
                 $transportTo,
@@ -43,6 +44,7 @@ class ApiTransportHandleController extends AbstractController
                 $transportDate,
                 $transportLoads
             );
+            */
             return new Response(
                 "<html><body>Yee I got something    </body></html>"
             );
