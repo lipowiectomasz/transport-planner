@@ -71,6 +71,7 @@ export default function TransportForm(){
         if(loadsList.length>1){
             loadsList.splice(id,1);
             addToLoadList([...loadsList]);
+            setDropZone(<>Usunieto plik!</>);
         } else {
             alert("W transporcie musi byc przynajmniej jeden towar!");
         }
@@ -130,11 +131,7 @@ export default function TransportForm(){
 
     const submitButton = (e:React.FormEvent) => {
         e.preventDefault();
-        /*
-
-        */
         if(dateValid){
-            //submit
             axios.post('/api/transport/make', transportData,
                 {
                     headers: {
@@ -147,7 +144,6 @@ export default function TransportForm(){
                     console.error(error);
                 })
         }
-        
         else{
             alert("Ustaw poprawna date!");
         }

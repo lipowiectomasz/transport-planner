@@ -1,7 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@200;400&display=swap');
+*{
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 400;
+}
 #title{
     margin-top: 3%;
     font-size: 2rem;
     text-align: center;
+    color:white;
 }
 #form-container{
     width: 100vw;
@@ -22,7 +28,7 @@
     width: 80%;
 
     *{
-        margin: 1% 0 1% 0;
+        margin: 1.2% 0 1.2% 0;
         width: 100%;
     }
 
@@ -52,6 +58,7 @@
                     display: flex;
                     flex-direction: row;
                     p{
+                        overflow-x: hidden;
                         width: 90%;
                     }
                     button{
@@ -93,10 +100,14 @@
     }
 
     button{
-        width: 30%;
+        width: 40%;
         padding: 2%;
         border-radius: 30px;
         border: none;
+    }
+
+    input, select, button{
+        box-shadow: 1px 1px 5px rgb(155, 155, 155);
     }
 
     .invalid{
@@ -143,5 +154,15 @@
 @media (min-width: 1000px){
     #main-form{
         width: 900px;
+    }
+}
+@media (min-width: 1300px){
+    #main-form{
+        width: 1200px;
+    }
+}
+@media (min-width: 1600px){
+    #main-form{
+        width: 1500px;
     }
 }
