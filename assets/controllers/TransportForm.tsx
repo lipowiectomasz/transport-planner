@@ -11,14 +11,14 @@ import ITransport from '../interfaces/ITransport';
 export default function TransportForm(){
 
     const initialLoads: ILoad[] = [{"load-name":"", "load-weight": 1, "load-type":"zwykly ladunek"}];
-
+    const [loader, setLoader] = useState("hide-loader");
     const [loadsList, addToLoadList] = useState<ILoad[]>(initialLoads);
     const [maxWeight, setMaxWeight] = useState(35);
     const [dropZoneClass, setDropZoneClass] = useState("drop-zone-unactive");
     const [dropedList, addToDropedList] = useState<File[]>([]);
     const [dropZone, setDropZone] = useState(<>Przeciagnij tu swoje dokumenty przewozowe</>);
     const [dateAlert, setDateAlert] = useState("");
-
+    const [mailTo, setMailTo] = useState("airbus@lemonmind.com");
     const initialData: ITransport = {
         "transport-from" : "",
         "transport-to" : "",
@@ -120,6 +120,7 @@ export default function TransportForm(){
     
     const setPlaneType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newMaxWeight = (e.target.value== "airbus-A380") ? 35 : 38;
+        (e.target.value == "airbus-A380") ? setMailTo('airbus@lemonmind.com') : setMailTo('boeing@lemonmind.com');
         setMaxWeight(newMaxWeight);
         for(let load of loadsList){
             if(load['load-weight']>newMaxWeight){
@@ -131,6 +132,7 @@ export default function TransportForm(){
 
     const submitButton = (e:React.FormEvent) => {
         e.preventDefault();
+        setLoader('vis-loader');
         if(dateValid){
             axios.post('/api/transport/make', transportData,
                 {
@@ -139,12 +141,19 @@ export default function TransportForm(){
                     }
             })
                 .then(response => {
-                    console.log(response.data);
+                    if(response.data.toString()=='OK'){
+                        window.location.replace('/send/'+mailTo);
+                    }
+                    if(response.data.toString()=='CANT-SEND'){
+                        window.location.replace('/notsend');
+                    }
                 }).catch(error => {
                     console.error(error);
+                    window.location.replace('/notsend');
                 })
         }
         else{
+            setLoader('hide-loader');
             alert("Ustaw poprawna date!");
         }
     }
@@ -279,6 +288,7 @@ export default function TransportForm(){
                     
                 </form>
             </div>
+            <div className={loader}></div>
         </>
     )
 }

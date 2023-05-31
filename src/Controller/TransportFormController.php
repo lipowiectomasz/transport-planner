@@ -16,4 +16,16 @@ class TransportFormController extends AbstractController
             'controller_name' => 'TransportFormController',
         ]);
     }
+
+    #[Route('/notsend', name: 'app_transport_notsend')]
+    public function notsend(): Response
+    {
+        return $this->render('transport_form/formNotSended.html.twig');
+    }
+
+    #[Route('/send/{mail}', name: 'app_transport_send')]
+    public function send(string $mail): Response
+    {
+        return $this->render('transport_form/formSended.html.twig', ['mail' => $mail]);
+    }
 }

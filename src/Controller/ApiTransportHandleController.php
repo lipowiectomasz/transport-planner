@@ -27,39 +27,26 @@ class ApiTransportHandleController extends AbstractController
             $transportDocs = $request->files->get('transport-docs');
             $transportDate = $request->request->get('transport-date');
             $transportLoads = $request->request->get('transport-loads');
+            $mailTo = ($transportPlaneType == 'airbus-A380') ? 'airbus@lemonmind.com' : 'boeing@lemonmind.com';
             
-            var_dump($transportFrom);
-            var_dump($transportTo);
-            var_dump($transportPlaneType);
-            var_dump($transportDocs);
-            var_dump($transportDate);
-            var_dump($transportLoads);
-            //$files = $request->files->get('transport-docs');
-            //var_dump($files[0]->getClientOriginalName());
-            /*
+            
             $this->makeMail(
                 $transportFrom,
                 $transportTo,
                 $transportDocs,
                 $transportDate,
-                $transportLoads
+                $transportLoads,
+                $mailTo
             );
-            */
-            return new Response(
-                "<html><body>Yee I got something    </body></html>"
-            );
-
+            
+            return new Response('OK');
         }
         else{
-            return new Response(
-                '<html><body>Didnt get it </body></html>'
-            );
+            return new Response('CANT-SEND');
         }
-
-
     }
 
-    protected function makeMail($transportFrom, $transportTo, $transportDocs, $transportDate, $transportLoads){
+    protected function makeMail($transportFrom, $transportTo, $transportDocs, $transportDate, $transportLoads, $mailTo){
         
         $transport = Transport::fromDsn('smtp://tomlipdev@gmail.com:koormjddihwgwgnp@smtp.gmail.com:587');
         
@@ -100,7 +87,7 @@ class ApiTransportHandleController extends AbstractController
         </table>
         <p style="font-size: 0.9rem; display: flex;	align-items: center; justify-content: center;
         background: linear-gradient(90deg, hsla(164, 38%, 18%, 1) 0%, hsla(158, 77%, 77%, 1) 100%);
-        height: 50px; width: 80%;">Tomasz Lipowiec</p>
+        height: 50px; width: 80%;">Tomasz Lipowiec'.$mailTo.'</p>
     </div>
 ');
 
