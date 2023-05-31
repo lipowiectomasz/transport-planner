@@ -141,6 +141,7 @@ export default function TransportForm(){
                     }
             })
                 .then(response => {
+                    
                     if(response.data.toString()=='OK'){
                         window.location.replace('/send/'+mailTo);
                     }

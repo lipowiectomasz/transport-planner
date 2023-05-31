@@ -10,11 +10,14 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 #[Route('/api/transport', name: 'app_api_transport_handle')]
 
 class ApiTransportHandleController extends AbstractController
 {
+
+    
     
     #[Route('/make', name: 'handle_make')]
     public function make(Request $request):Response{
@@ -49,12 +52,10 @@ class ApiTransportHandleController extends AbstractController
     protected function makeMail($transportFrom, $transportTo, $transportDocs, $transportDate, $transportLoads, $mailTo){
         
         $transport = Transport::fromDsn('smtp://tomlipdev@gmail.com:koormjddihwgwgnp@smtp.gmail.com:587');
-        
         $mailer = new Mailer($transport);
         $email = (new Email());
         $email->from('tomlipdev@gmail.com');
-        $email->to('tomik993@o2.pl');
-
+        $email->to('tomko993@gmail.com');
         $email->subject("Nowy transport");
         
         if($transportDocs != NULL){
