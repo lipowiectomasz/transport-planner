@@ -2,7 +2,7 @@
 
 Projekt powstał z wykorzystaniem Symfony w części backendowej oraz Reacta do części frontendowej.
 
-Przed uruchomieniem:
+### Przed uruchomieniem:
   ```
   composer update
   
@@ -10,11 +10,11 @@ Przed uruchomieniem:
   
   yarn encore dev
   ```
-Uruchomienie: 
+### Uruchomienie: 
  ```
   symfony server:start
  ``` 
-Zrealizowano:
+### Zrealizowano:
 
   - formularz do tworzenia listy towarów dla transportu,
   - wysyłanie danych transportowych na określone adresy e-mail,
