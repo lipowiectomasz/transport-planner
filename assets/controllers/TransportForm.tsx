@@ -190,35 +190,38 @@ export default function TransportForm(){
                         setDropZoneClass("invalid");
                     } 
                     else{
-                        let allowType = false;
-                        if(file.type == 'image/jpeg' && file.name.substring(file.name.length - 3) == 'jpg'){
-                            allowType = true;
-                        }
-                        else if(file.type == 'image/png' && file.name.substring(file.name.length - 3) == 'png'){
-                            allowType = true;
-                        }
-                        else if(file.type == 'application/pdf' && file.name.substring(file.name.length - 3) == 'pdf'){
-                            allowType = true;
-                        }
-                        else if(file.type == 'application/msword' && file.name.substring(file.name.length - 3) == 'doc'){
-                            allowType = true;
-                        }
-                        else if(file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && file.name.substring(file.name.length - 4) == 'docx'){
-                            allowType = true;
-                        }
-                        if(allowType==true){
-                            addToDropedList(prev => [...prev, file]);
-                            setDropZone(<>Przeslano plik!</>);
-                            setDropZoneClass("valid");
-                        }
-                        else{
-                            setDropZone(<>Zly format. Akceptowane formaty to: .jpg, .png, .pdf, .docx, .doc.</>);
-                            setDropZoneClass("invalid");
-                        }
-                        
+                        checkFileAndSave(file);
                     }
                 }
             }    
+        }
+    }
+
+    const checkFileAndSave = (file: File) => {
+        let allowType = false;
+        if(file.type == 'image/jpeg' && file.name.substring(file.name.length - 3) == 'jpg'){
+            allowType = true;
+        }
+        else if(file.type == 'image/png' && file.name.substring(file.name.length - 3) == 'png'){
+            allowType = true;
+        }
+        else if(file.type == 'application/pdf' && file.name.substring(file.name.length - 3) == 'pdf'){
+            allowType = true;
+        }
+        else if(file.type == 'application/msword' && file.name.substring(file.name.length - 3) == 'doc'){
+            allowType = true;
+        }
+        else if(file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && file.name.substring(file.name.length - 4) == 'docx'){
+            allowType = true;
+        }
+        if(allowType==true){
+            addToDropedList(prev => [...prev, file]);
+            setDropZone(<>Przeslano plik!</>);
+            setDropZoneClass("valid");
+        }
+        else{
+            setDropZone(<>Zly format. Akceptowane formaty to: .jpg, .png, .pdf, .docx, .doc.</>);
+            setDropZoneClass("invalid");
         }
     }
 
@@ -235,7 +238,7 @@ export default function TransportForm(){
         if(filesInput.files){
             for(let file of filesInput.files){
                 if(!dropedList.find( el => el == file))
-                    addToDropedList([...dropedList, file]);
+                checkFileAndSave(file);
             }
         }
     }
