@@ -3,13 +3,13 @@
 Projekt powstał z wykorzystaniem Symfony w części backendowej oraz Reacta do części frontendowej.
 
 Przed uruchomieniem:
-  
+  ```
   composer update
   
   yarn install
   
   yarn encore dev
-  
+  ```
 Uruchomienie: 
 
   symfony server:start
