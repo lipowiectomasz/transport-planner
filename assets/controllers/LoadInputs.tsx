@@ -13,8 +13,8 @@ export default function LoadInputs(props:{loads:ILoad[], maxWeight: number, modL
             <input type="number" name="load-weight" required placeholder="Ciezar ladunku" min="1" max={props.maxWeight} onChange={(e) => props.modLoad(e, args.id)} defaultValue={args.load['load-weight']}></input>
             <label>Data transportu:</label>
             <select name="load-type" required onChange={(e) => props.modLoad(e, args.id)} defaultValue={args.load['load-type']}>
-                <option value="common-load">Zwykly ladunek</option>
-                <option value="dangerous-load">Ladunek niebezpieczny</option>
+                <option value="zwykly ladunek">Zwykly ladunek</option>
+                <option value="ladunek niebezpieczny">Ladunek niebezpieczny</option>
             </select>
             <button className="del-button" onClick={(e)=>{props.delLoad(e, args.id)}}>X</button>
         </div>)

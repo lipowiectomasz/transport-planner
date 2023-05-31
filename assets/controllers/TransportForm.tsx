@@ -10,7 +10,7 @@ import ITransport from '../interfaces/ITransport';
 
 export default function TransportForm(){
 
-    const initialLoads: ILoad[] = [{"load-name":"", "load-weight": 1, "load-type":"common-load"}];
+    const initialLoads: ILoad[] = [{"load-name":"", "load-weight": 1, "load-type":"zwykly ladunek"}];
 
     const [loadsList, addToLoadList] = useState<ILoad[]>(initialLoads);
     const [maxWeight, setMaxWeight] = useState(35);
@@ -128,10 +128,17 @@ export default function TransportForm(){
 
     const submitButton = (e:React.FormEvent) => {
         e.preventDefault();
-        
+        /*
+
+        */
         if(dateValid){
             //submit
-            axios.post('/api/transport/make', transportData)
+            axios.post('/api/transport/make', transportData,
+                {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    }
+            })
                 .then(response => {
                     console.log(response.data);
                 }).catch(error => {
